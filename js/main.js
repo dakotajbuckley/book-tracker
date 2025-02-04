@@ -65,20 +65,31 @@
 
 
 
+let books;
 
+books = [];
 
-
-
-
-
-
-
-
-
+// if (!localStorage.getItem('books')) {
+//   books = []
+//   let string = JSON.stringify(books);
+//   localStorage.setItem('books', string);
+// } else {
+//   books = localStorage.getItem('books');
+//   console.log(typeof books)
+//   books = JSON.parse(books);
+// }
 
 
 
 document.querySelector('button').addEventListener('click', getFetch)
+
+function NewBook(title, cover, firstSentence, pageCount, publishDate) {
+  this.title = title;
+  this.cover = cover;
+  this.firstSentence = firstSentence;
+  this.pageCount = pageCount;
+  this.publishDate = publishDate;
+}
 
 function getFetch() {
   let choice = document.querySelector('input').value
@@ -86,19 +97,40 @@ function getFetch() {
   fetch(url)
   .then(res => res.json())
   .then(data => {
+
     console.log(data)
-    document.querySelector('#title').innerText = "Title: " + data.title
-    document.querySelector('img').src = `https://covers.openlibrary.org/b/isbn/${choice}-L.jpg`
-    if (data.first_sentence) {
-      document.querySelector('#firstSentance').innerText = "First Sentance: " + data.first_sentence.value
+
+    let title;
+    let cover;
+    let pageCount;
+    let publishDate;
+
+    
+    // document.querySelector('#title').innerText = "Title: " + data.title
+    // document.querySelector('img').src = `https://covers.openlibrary.org/b/isbn/${choice}-L.jpg`
+    if (data.title) {
+      title = data.title;
     }
+    cover = `https://covers.openlibrary.org/b/isbn/${choice}-L.jpg`
     if (data.number_of_pages) {
-      document.querySelector('#pageCount').innerText = "Page Count: " + data.number_of_pages
+      pageCount = data.pageCount;
     }
     if (data.publish_date) {
-      document.querySelector('#publishDate').innerText = "Publish Date: " + data.publish_date
+      publishDate = data.publishDate;
     }
     
-    
+    let string = JSON.stringify({
+      title: title,
+      cover: cover,
+      pageCount: pageCount,
+      publishDate: publishDate
+    })
+    books.push(string)
+    localStorage.setItem('books', books)
   })
+}
+
+function getItem() {
+  let tempBooks = localStorage.getItem('books');
+  console.log(tempBooks[0])
 }
